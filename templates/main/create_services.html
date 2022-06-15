@@ -1,0 +1,83 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Создание организации{% endblock %}
+
+{% block content %}
+    <style>
+        select {
+            height: 40px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="text"] {
+            height: 40px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+
+        }
+
+        .a {
+            width: 600px;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+    </style>
+    <body>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <h1>Создать сервис</h1>
+        <div class="a">
+            <form method="post">
+            {% csrf_token %}
+                <label for="or">Выберите организацию</label>
+                <select id="or" name="organization">
+                    {% for el in organizations %}
+                        <option value="{{ el.id }}">{{ el.name }}</option>
+                    {% endfor %}
+                </select><br>
+                <label for="o">Введите ip адрес</label>
+                <input id="o" type="text" name="id_address"><br>
+
+                <label for="l">Введите логин</label>
+                <input id="l" type="text" name="login"><br>
+
+                <label for="p">Введите пароль</label>
+                <input id="p" type="text" name="password"><br>
+                <button type="submit" class="btn btn-secondary">Создать</button>
+            </form>
+        </div>
+        <h1>Редактировать сервис</h1>
+    <div class="a">
+    <p>{{ g }}</p>
+            <form method="POST">
+            {% csrf_token %}
+                <label for="or">Выберите сервис</label>
+                <select id="or" name="services1">
+                <option></option>
+                    {% for el in services1 %}
+                        <option value="{{ el.id }}">{{ el.ip_address }}</option>
+                    {% endfor %}
+                </select><br>
+            <h4>Выберите данные, которые нужно изменить</h4>
+                <label for="o">Введите ip адрес</label>
+                <input id="o" type="text" name="ip_address"><br>
+
+                <label for="l">Введите логин</label>
+                <input id="l" type="text" name="login"><br>
+
+                <label for="p">Введите пароль</label>
+                <input id="p" type="text" name="password"><br>
+                <button type="submit" class="btn btn-secondary">Редактировать</button>
+            </form>
+        </div>
+    </main>
+    </body>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CreateUserForm, OrganizationForm
 from django.contrib import messages
@@ -13,7 +13,7 @@ import random
 from hashlib import sha1
 from django.contrib.auth.hashers import check_password
 import random
-from .models import Services, Get_Password
+from .models import Services, Get_Password, Organization
 
 
 def loginPage(request):
@@ -110,6 +110,7 @@ def services(request, services_id):
                 password = ''
                 for i in range(length):
                     password += random.choice(chars)
+            password = service1.password
         else:
             get_password = None
 
@@ -124,10 +125,60 @@ def services(request, services_id):
 
 
 def create_organization(request):
-    if request.method == 'POST':
-        f = OrganizationForm(request.POST)
-        if f.is_valid():
-            f.save()
+    if request.user.groups.filter(name='Admin').exists():
+        if request.method == 'POST':
+            f = OrganizationForm(request.POST)
+            if f.is_valid():
+                f.save()
+                return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+        else:
+            f = OrganizationForm()
+        return render(request, 'main/create_organization.html', {'form': f})
     else:
-        f = OrganizationForm()
-    return render(request, 'main/create_organization.html', {'form': f})
+        return HttpResponse("Вкладка доступна только для администрации")
+
+
+def create_services(request):
+    organizations = Organization.objects.all()
+    services1 = Services.objects.all()
+    g=0
+    if request.method == 'POST' and request.POST.get('services1') is not None:
+        serv = Services.objects.get(id=request.POST.get('services1'))
+
+        if request.POST.get('ip_address') is not None:
+            serv.ip_address = request.POST.get('ip_address')
+        if request.POST.get('login') is not None:
+            serv.login = request.POST.get('login')
+        if request.POST.get('password') is not None:
+            serv.password = request.POST.get('password')
+        serv.save()
+        g = serv.login
+        context = {
+            'organizations': organizations,
+            'services1': services1,
+            'g': g
+        }
+        return render(request, 'main/create_services.html', context=context)
+    elif request.method == 'POST':
+        services = Services()
+        organization = Organization.objects.get(id=request.POST.get('organization'))
+        services.organization = organization
+        services.ip_address = request.POST.get('id_address')
+        services.ip_address = request.POST.get('login')
+        services.ip_address = request.POST.get('password')
+        services.save()
+        return HttpResponseRedirect('/services/' + str(services.id))
+    else:
+        context = {
+            'organizations': organizations,
+            'services1': services1,
+            'g': g
+        }
+        return render(request, 'main/create_services.html', context=context)
+
+
+def report(request):
+    context = {
+
+    }
+    return render(request, 'main/report.html', context=context)

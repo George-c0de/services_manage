@@ -10,5 +10,6 @@ urlpatterns = [
     path('register', views.RegisterPage, name='register'),
     path('create_organization', views.create_organization, name='create_organization'),
     path('services/<int:services_id>', views.services, name='services'),
+    path('create_services', views.create_services, name='create_services'),
     # path('create_adm/<int:id>', views.create_adm, name='create_adm'),
 ]# + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

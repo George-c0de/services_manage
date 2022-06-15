@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Создание организации{% endblock %}
+
+{% block content %}
+    <style>
+    input[type="text"]{
+    margin: 5px;
+    }
+    .text-field__input:focus {
+  color: #212529;
+  background-color: #fff;
+  border-color: #bdbdbd;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(158, 158, 158, 0.25);
+}
+    main{
+        text-align: left;
+    }
+    </style>
+    <body>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h1>Создание организации</h1>
+        <div class="chartjs-size-monitor">
+            <div class="chartjs-size-monitor-expand">
+                <div class=""></div>
+            </div>
+            <div class="chartjs-size-monitor-shrink">
+                <div class=""></div>
+            </div>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+        {{ form }}
+            <br><br>
+            <button type="submit" class="btn btn-dark">Создать</button>
+            </form>
+    </main>
+    </body>
+{% endblock %}

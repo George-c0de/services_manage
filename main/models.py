@@ -1,7 +1,17 @@
 from django.db import models
 from django.urls import reverse
 
+
 class Application(models.Model):
+    ip_address = models.CharField('Ip Адрес', max_length=50)
+    login = models.CharField('Логин', max_length=50)
+    password = models.CharField('Пароль', max_length=50)
+
+
+class Organization(models.Model):
+    name = models.CharField('Название', max_length=50)
+    name = models.CharField('Название', max_length=50)
+    """
     date_application = models.DateTimeField('Дата подачи заявки')
     time = models.TimeField('Время подачи', default=datetime.datetime.now())
     date_receipt = models.DateField('Дата приема')
@@ -18,4 +28,4 @@ class Application(models.Model):
 
     def get_absolute_url(self):
         return reverse('application', kwargs={'application_slug': self.slug})
-
+    """

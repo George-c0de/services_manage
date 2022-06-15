@@ -58,33 +58,39 @@ def RegisterPage(request):
 
 # @login_required(login_url='login')
 def index(request):
-    user = request.user.username
+    service = Services.objects.filter(ip_address=request.GET.get('search'))
+    service_name = Services.objects.filter(organization__name=request.GET.get('search'))
+    search = request.GET.get('search')
+    if request.method == 'GET' and search is not None:
+        if not service:
+            if not service_name:
+                context = {
+                    'services': None,
+                    'title': 'Главная страница1',
+                }
+            else:
+                context = {
+                    'services': service_name,
+                    'title': 'Главная страница2',
+                }
+        else:
+            context = {
+                'services': service,
+                'title': 'Главная страница3',
+            }
+    else:
+        service = Services.objects.all()
+        context = {
+            'services': service,
+            'title': 'Главная страница4',
+        }
     template = 'main/index.html'
-    extends = 'main/base.html'
-    return render(request, template,
-                  {'title': 'Главная страница', 'extends': extends, 'name': user})
+    return render(request, template, context=context)
 
 
 def services(request):
-    service = Services.objects.filter(ip_address=request.GET.get('search'))
-    service_name = Services.objects.filter(organization__name=request.GET.get('search'))
-    if service is None:
-        if service_name is None:
-            context = {
-                'services': None,
-                'title': 'Поиск',
-            }
-        else:
-            context = {
-                'services': service_name,
-                'title': 'Поиск',
-            }
-    else:
-        context = {
-            'services': service,
-            'title': 'Поиск',
-        }
-    return render(request, 'main/services.html', context=context)
+
+    return render(request, 'main/services.html')
 
 
 def create_organization(request):

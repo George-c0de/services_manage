@@ -10,8 +10,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.contrib.auth import models
 import random
-
-from .models import Services
+from hashlib import sha1
+from django.contrib.auth.hashers import check_password
+import random
+from .models import Services, Get_Password
 
 
 def loginPage(request):
@@ -88,9 +90,37 @@ def index(request):
     return render(request, template, context=context)
 
 
-def services(request):
+def services(request, services_id):
+    service = Services.objects.get(id=services_id)
+    password = None
+    if request.method == 'POST':
+        id_services = request.POST.get('id_services')
+        id_user = request.user.id
+        user = User.objects.get(id=id_user)
+        if check_password(request.POST.get('password'), user.password) and user.username == request.POST.get('login'):
+            get_password = Get_Password()
+            service1 = Services.objects.get(id=id_services)
+            get_password.id_services = service1
+            get_password.id_user = user
+            get_password.save()
+            chars = '-_abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+            number = 1
+            length = 10
+            for n in range(number):
+                password = ''
+                for i in range(length):
+                    password += random.choice(chars)
+        else:
+            get_password = None
 
-    return render(request, 'main/services.html')
+    else:
+        get_password = None
+    context = {
+        'service': service,
+        'get_password': get_password,
+        'password': password
+    }
+    return render(request, 'main/services.html', context=context)
 
 
 def create_organization(request):

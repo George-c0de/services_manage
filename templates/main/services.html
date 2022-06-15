@@ -1,7 +1,71 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Поиск{% endblock %}
+{% block title %}{{ service.organization.name }}{% endblock %}
 
 {% block content %}
+    <style>
 
+    h1{
+        text-align: center;
+        margin-bottom: 29px;
+    }
+    input[type="text"]{
+        height: 40px;
+        padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+    }
+    .a {
+        width: 450px;
+        border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+    }
+
+    </style>
+<body>
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="row">
+ <h1>{{ service.organization.name }}</h1></div>
+        <div class="row">
+            <h4> IP Адрес: {{ service.ip_address }}</h4></div>
+    <div class="a">
+        {% if get_password %}
+            <label for="one">Ваш пароль</label>
+            <input onclick="funonload()" value="{{ password }}" id="one" readonly name="password" type="text" >
+        {% else %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                <label  for="one">Логин: </label>
+                <input  id="one" name="login" type="text" placeholder="Введите ваш логин"><br>
+                <label for="two">Пароль: </label>
+                <input  id="two" name="password" type="text" placeholder="Введите ваш пароль">
+                    <input type="hidden" value="{{ service.id }}" name="id_services">
+                    <button type="submit" class="btn btn-secondary">Получить пароль</button>
+                    </div>
+            </form>
+            </div>
+    {% endif %}
+
+</main>
+<script type="text/javascript">
+    function funonload() {
+    var text = document.getElementById('one')
+  text.select();
+  document.execCommand('copy')
+}
+    function ready() {
+    alert( 'DOM готов' );
+  }
+
+document.addEventListener("DOMContentLoaded", function(){
+funonload();
+});
+
+</script>
+</body>
 {% endblock %}

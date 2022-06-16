@@ -1,0 +1,70 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Отчет{% endblock %}
+
+{% block content %}
+    <body>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        {% if c == 1 %}
+            {% if user_yes == 1 %}
+                <p>{{ user.username }}</p>
+                <ol>
+                {% for el in get_pass %}
+                    <li></li>
+                    <p>Сервис: {{ el.id_services.ip_address }}</p>
+                    <p>Дата: {{ el.date }}</p>
+                {% endfor %}
+                </ol>
+                {% endif %}
+            {% if org %}
+                <h4>{{ org.name }}</h4>
+                <p>Кол-во сотрудников: {{ col }}</p>
+                {% endif %}
+            {% if service %}
+                <h4>{{ service.ip_address }}</h4>
+                <ol>
+                {% for el in get_pass %}
+                    <li></li>
+                    <p>Сервис: {{ el.id_services.ip_address }}</p>
+                    <p>Дата: {{ el.date }}</p>
+                {% endfor %}
+                </ol>
+                {% endif %}
+    {% else %}
+        <form method="get">
+            <label for="us">Выберите пользователя</label>
+        <select name="user" id="us">
+        <option></option>
+            {% for el in users %}
+                <option value="{{ el.id }}">{{ el.username }}</option>
+            {% endfor %}
+        </select>
+            <button type="submit" class="btn btn-secondary">Отчет</button>
+        </form>
+
+        <form method="get">
+            <label for="or">Выберите организацию</label>
+        <select name="organization" id="or">
+        <option></option>
+            {% for el in organization %}
+                <option value="{{ el.id }}">{{ el.name }}</option>
+            {% endfor %}
+        </select>
+            <button type="submit" class="btn btn-secondary">Отчет</button>
+        </form>
+
+        <form method="get">
+            <label for="ser">Выберите сервис</label>
+        <select name="services" id="ser">
+        <option></option>
+            {% for el in services %}
+                <option value="{{ el.id }}">{{ el.ip_address }}</option>
+            {% endfor %}
+        </select>
+            <button type="submit" class="btn btn-secondary">Отчет</button>
+        </form>
+        {% endif %}
+
+    </main>
+    </body>
+{% endblock %}

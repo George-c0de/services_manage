@@ -141,7 +141,7 @@ def create_organization(request):
 def create_services(request):
     organizations = Organization.objects.all()
     services1 = Services.objects.all()
-    g=0
+    g = 0
     if request.method == 'POST' and request.POST.get('services1') is not None:
         serv = Services.objects.get(id=request.POST.get('services1'))
 
@@ -178,7 +178,49 @@ def create_services(request):
 
 
 def report(request):
+    services = Services.objects.all()
+    organization = Organization.objects.all()
+    users = User.objects.all()
     context = {
-
+        'services': services,
+        'organization': organization,
+        'users': users,
+        'c': 2
     }
+    if request.method == 'GET':
+        if request.GET.get('organization') is not None:
+            org = Organization.objects.get(id=request.GET.get('organization'))
+            context = {
+                'services': services,
+                'organization': organization,
+                'users': users,
+                'col': org.col,
+                'org': org,
+                'c': 1,
+            }
+        if request.GET.get('user') is not None:
+            user = User.objects.get(id=request.GET.get('user'))
+            get_pass = Get_Password.objects.filter(id_user=request.GET.get('user'))
+            context = {
+                'services': services,
+                'organization': organization,
+                'users': users,
+                'user': user,
+                'get_pass': get_pass,
+                'c': 1,
+                'user_yes': 1
+            }
+        if request.GET.get('services') is not None:
+            get_pass = Get_Password.objects.filter(id_services=request.GET.get('services'))
+            ser = Services.objects.get(id=request.GET.get('services'))
+            context = {
+                'services': services,
+                'organization': organization,
+                'users': users,
+                'service': ser,
+                'get_pass': get_pass,
+                'c': 1,
+            }
+        return render(request, 'main/report.html', context=context)
+
     return render(request, 'main/report.html', context=context)

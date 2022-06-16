@@ -42,9 +42,7 @@ def logoutUser(request):
 
 
 def RegisterPage(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    else:
+    if request.user.groups.filter(name='Admin').exists():
         form = CreateUserForm()
         if request.method == 'POST':
             form = CreateUserForm(request.POST)
@@ -52,10 +50,12 @@ def RegisterPage(request):
                 form.save()
                 user = form.cleaned_data.get('username')
                 messages.success(request, 'Аккаунт создан,' + user)
-                return redirect('login')
+                return redirect('home')
 
         context = {'form': form}
         return render(request, 'main/register.html', context)
+    else:
+        return HttpResponse("Вкладка доступна только для администрации")
 
 
 # @login_required(login_url='login')
@@ -106,6 +106,9 @@ def services(request, services_id):
             chars = '-_abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
             number = 1
             length = 10
+            org = Organization.objects.get(id=service1.organization.id)
+            org.col += 1
+            org.save()
             for n in range(number):
                 password = ''
                 for i in range(length):
@@ -139,88 +142,89 @@ def create_organization(request):
 
 
 def create_services(request):
-    organizations = Organization.objects.all()
-    services1 = Services.objects.all()
-    g = 0
-    if request.method == 'POST' and request.POST.get('services1') is not None:
-        serv = Services.objects.get(id=request.POST.get('services1'))
-
-        if request.POST.get('ip_address') is not None:
-            serv.ip_address = request.POST.get('ip_address')
-        if request.POST.get('login') is not None:
-            serv.login = request.POST.get('login')
-        if request.POST.get('password') is not None:
-            serv.password = request.POST.get('password')
-        serv.save()
-        g = serv.login
-        context = {
-            'organizations': organizations,
-            'services1': services1,
-            'g': g
-        }
-        return render(request, 'main/create_services.html', context=context)
-    elif request.method == 'POST':
-        services = Services()
-        organization = Organization.objects.get(id=request.POST.get('organization'))
-        services.organization = organization
-        services.ip_address = request.POST.get('id_address')
-        services.ip_address = request.POST.get('login')
-        services.ip_address = request.POST.get('password')
-        services.save()
-        return HttpResponseRedirect('/services/' + str(services.id))
+    if request.user.groups.filter(name='Admin').exists():
+        organizations = Organization.objects.all()
+        services1 = Services.objects.all()
+        if request.method == 'POST' and request.POST.get('services1') is not None:
+            serv = Services.objects.get(id=request.POST.get('services1'))
+            if request.POST.get('ip_address') is not None:
+                serv.ip_address = request.POST.get('ip_address')
+            if request.POST.get('login') is not None:
+                serv.login = request.POST.get('login')
+            if request.POST.get('password') is not None:
+                serv.password = request.POST.get('password')
+            serv.save()
+            context = {
+                'organizations': organizations,
+                'services1': services1,
+            }
+            return render(request, 'main/create_services.html', context=context)
+        elif request.method == 'POST':
+            services = Services()
+            organization = Organization.objects.get(id=request.POST.get('organization'))
+            services.organization = organization
+            services.ip_address = request.POST.get('ip_address')
+            services.login = request.POST.get('login')
+            services.password = request.POST.get('password')
+            services.save()
+            return HttpResponseRedirect('/services/' + str(services.id))
+        else:
+            context = {
+                'organizations': organizations,
+                'services1': services1,
+            }
+            return render(request, 'main/create_services.html', context=context)
     else:
-        context = {
-            'organizations': organizations,
-            'services1': services1,
-            'g': g
-        }
-        return render(request, 'main/create_services.html', context=context)
+        return HttpResponse("Вкладка доступна только для администрации")
 
 
 def report(request):
-    services = Services.objects.all()
-    organization = Organization.objects.all()
-    users = User.objects.all()
-    context = {
-        'services': services,
-        'organization': organization,
-        'users': users,
-        'c': 2
-    }
-    if request.method == 'GET':
-        if request.GET.get('organization') is not None:
-            org = Organization.objects.get(id=request.GET.get('organization'))
-            context = {
-                'services': services,
-                'organization': organization,
-                'users': users,
-                'col': org.col,
-                'org': org,
-                'c': 1,
-            }
-        if request.GET.get('user') is not None:
-            user = User.objects.get(id=request.GET.get('user'))
-            get_pass = Get_Password.objects.filter(id_user=request.GET.get('user'))
-            context = {
-                'services': services,
-                'organization': organization,
-                'users': users,
-                'user': user,
-                'get_pass': get_pass,
-                'c': 1,
-                'user_yes': 1
-            }
-        if request.GET.get('services') is not None:
-            get_pass = Get_Password.objects.filter(id_services=request.GET.get('services'))
-            ser = Services.objects.get(id=request.GET.get('services'))
-            context = {
-                'services': services,
-                'organization': organization,
-                'users': users,
-                'service': ser,
-                'get_pass': get_pass,
-                'c': 1,
-            }
-        return render(request, 'main/report.html', context=context)
+    if request.user.groups.filter(name='Admin').exists():
+        services = Services.objects.all()
+        organization = Organization.objects.all()
+        users = User.objects.all()
+        context = {
+            'services': services,
+            'organization': organization,
+            'users': users,
+            'c': 2
+        }
+        if request.method == 'GET':
+            if request.GET.get('organization') is not None:
+                org = Organization.objects.get(id=request.GET.get('organization'))
+                context = {
+                    'services': services,
+                    'organization': organization,
+                    'users': users,
+                    'col': org.col,
+                    'org': org,
+                    'c': 1,
+                }
+            if request.GET.get('user') is not None:
+                user = User.objects.get(id=request.GET.get('user'))
+                get_pass = Get_Password.objects.filter(id_user=request.GET.get('user'))
+                context = {
+                    'services': services,
+                    'organization': organization,
+                    'users': users,
+                    'user': user,
+                    'get_pass': get_pass,
+                    'c': 1,
+                    'user_yes': 1
+                }
+            if request.GET.get('services') is not None:
+                get_pass = Get_Password.objects.filter(id_services=request.GET.get('services'))
+                ser = Services.objects.get(id=request.GET.get('services'))
+                context = {
+                    'services': services,
+                    'organization': organization,
+                    'users': users,
+                    'service': ser,
+                    'get_pass': get_pass,
+                    'c': 1,
+                }
+            return render(request, 'main/report.html', context=context)
 
-    return render(request, 'main/report.html', context=context)
+        return render(request, 'main/report.html', context=context)
+    else:
+        return HttpResponse("Вкладка доступна только для администрации")

@@ -44,7 +44,7 @@
                     {% endfor %}
                 </select><br>
                 <label for="o">Введите ip адрес</label>
-                <input id="o" type="text" name="id_address"><br>
+                <input id="o" type="text" name="ip_address"><br>
 
                 <label for="l">Введите логин</label>
                 <input id="l" type="text" name="login"><br>
@@ -56,7 +56,6 @@
         </div>
         <h1>Редактировать сервис</h1>
     <div class="a">
-    <p>{{ g }}</p>
             <form method="POST">
             {% csrf_token %}
                 <label for="or">Выберите сервис</label>

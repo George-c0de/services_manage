@@ -93,6 +93,7 @@ def index(request):
 def services(request, services_id):
     service = Services.objects.get(id=services_id)
     password = None
+    login = None
     if request.method == 'POST':
         id_services = request.POST.get('id_services')
         id_user = request.user.id
@@ -114,6 +115,7 @@ def services(request, services_id):
                 for i in range(length):
                     password += random.choice(chars)
             password = service1.password
+            login = service1.login
         else:
             get_password = None
 
@@ -122,7 +124,8 @@ def services(request, services_id):
     context = {
         'service': service,
         'get_password': get_password,
-        'password': password
+        'password': password,
+        'login': login
     }
     return render(request, 'main/services.html', context=context)
 

@@ -34,6 +34,8 @@
             <h4> IP Адрес: {{ service.ip_address }}</h4></div>
     <div class="a">
         {% if get_password %}
+            <label>Ваш логин</label>
+            <input value="{{ login }}" readonly name="login" type="text"><br>
             <label for="one">Ваш пароль</label>
             <input onclick="funonload()" value="{{ password }}" id="one" readonly name="password" type="text" >
         {% else %}

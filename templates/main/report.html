@@ -7,7 +7,7 @@
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         {% if c == 1 %}
             {% if user_yes == 1 %}
-                <p>{{ user.username }}</p>
+                <p>Отчет по пользователю: <b>{{ user.username }}</b></p>
                 <ol>
                 {% for el in get_pass %}
                     <li></li>
@@ -27,6 +27,7 @@
                     <li></li>
                     <p>Сервис: {{ el.id_services.ip_address }}</p>
                     <p>Дата: {{ el.date }}</p>
+                    <p>Пользователь: {{ el.id_user.username }}</p>
                 {% endfor %}
                 </ol>
                 {% endif %}
